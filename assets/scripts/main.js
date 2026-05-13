@@ -24,6 +24,8 @@ function getRecipesFromStorage() {
 	// A9. TODO - Complete the functionality as described in this function
 	//           header. It is possible in only a single line, but should
 	//           be no more than a few lines.
+	return JSON.parse(localStorage.getItem('recipes')) || [];
+	
 }
 
 /**
@@ -39,6 +41,14 @@ function addRecipesToDocument(recipes) {
 	//            create a <recipe-card> element for each one, and populate
 	//            each <recipe-card> with that recipe data using element.data = ...
 	//            Append each element to <main>
+	const main = document.querySelector('main');
+
+	recipes.forEach(recipe => {
+		const recipeCard = document.createElement('recipe-card');
+		recipeCard.data = recipe;
+		main.appendChild(recipeCard);
+	});
+
 }
 
 /**
@@ -51,6 +61,7 @@ function saveRecipesToStorage(recipes) {
 	// B1. TODO - Complete the functionality as described in this function
 	//            header. It is possible in only a single line, but should
 	//            be no more than a few lines.
+	localStorage.setItem('recipes', JSON.stringify(recipes));
 }
 
 /**
@@ -76,4 +87,35 @@ function initFormHandler() {
 	// Steps B12 & B13 will occur inside the event listener from step B11
 	// B12. TODO - Clear the local storage
 	// B13. TODO - Delete the contents of <main>
+	const form = document.querySelector('form');
+
+	// B3,4,5
+	form.addEventListener('submit', (e) => {
+
+		e.preventDefault();
+		const formData = new FormData(form);
+		const recipeObject = {};
+
+		formData.forEach((value, key) => {
+			recipeObject[key] = value;
+		});
+
+		// B67,8
+		const recipeCard = document.createElement('recipe-card');
+		recipeCard.data = recipeObject;
+		document.querySelector('main').appendChild(recipeCard);
+		const recipes = getRecipesFromStorage();
+		recipes.push(recipeObject);
+		saveRecipesToStorage(recipes);
+	});
+
+	// B10
+	const clearButton = document.querySelector('button');
+
+	// B11, 12, 13
+	clearButton.addEventListener('click', () => {
+		localStorage.clear();
+		document.querySelector('main').innerHTML = '';
+	});
+
 }
